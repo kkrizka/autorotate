@@ -1,0 +1,28 @@
+Package: autorotate
+Version: 0.3
+Author: Karol Krizka <kkrizka@gmail.com>
+Website: http://www.krizka.net
+
+
+Automatically rotates the screen of a tablet laptop based on orientation using the HDAPS sensor. It was developed for the ThinkPad X61 Tablet, but it should work with any other tablet too.
+
+There is also a script called manual-rotate.py that allows you to disable automatic rotation. It basically allows you to manually change rotation until full circle is reached. The automatic rotation is enabled again.
+manual-rotate.py can also be used as a stand-alone script, without auto-rotate.py running. In that case, it just rotates the screen 90 degrees.
+
+It functions as follows:
+- Connects to a running auto-rotate.py script via dbus, and continue does the following if laptop is in tablet mode
+  - Disables autorotation, and rotates the screen 90 degrees
+  - If rotation is already disabled, and we've reached 180 degree rotation (upside down screen, when in laptop mode), then autorotation is enabled again.
+- If cannot connect to dbus (auto-rotate.py not running), then it rotates the screen 90 degrees.
+
+Requirements:
+ - python-xrandr
+ - python-dbus
+ - python-glib
+
+To install:
+   1) Run ./setup.py install with write permissions.
+   2) Add auto-rotate.py to automatic startup script.
+      a) For example, add the following to the end, but before exit 0, of /etc/gdm/Init/Default
+         auto-rotate.py &
+   3) Bind a button to manual-rotate.py command, which disables automatic rotation and allows you to control it manually.
