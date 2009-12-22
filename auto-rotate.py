@@ -37,14 +37,17 @@ def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
     system_bus = dbus.SystemBus()
-    busname = dbus.service.BusName("net.krizka.autorotate",system_bus);
 
-    autorotate=AutoRotate(system_bus,"/rotate")
-
-    # Start loop
-    glib.timeout_add(2000,autorotate.run)
-    
-    mainloop = gobject.MainLoop()
-    mainloop.run()
+    system_services = system_bus.list_names()
+    if(not "net.krizka.autorotate" in system_services): # Don't bother starting several instances of the autorotate daemon
+        busname = dbus.service.BusName("net.krizka.autorotate",system_bus);
+        
+        autorotate=AutoRotate(system_bus,"/rotate")
+        
+        # Start loop
+        glib.timeout_add(2000,autorotate.run)
+        
+        mainloop = gobject.MainLoop()
+        mainloop.run()
 
 main()

@@ -1,5 +1,17 @@
+autorotate (0.4) karmic; urgency=low
+
+  * Added .conf file to allow creation of system bus
+  * manual-rotate.py notifies the user when automatic rotation is
+    enabled/disabled via libnotify 
+  * Added dbus .service file describing the autorotate service
+  * Fixed the dependencies in the debian control file 
+  * Check if autorotate daemon already running before starting another
+    one
+
+ -- Karol Krizka <kkrizka@gmail.com>  Mon, 21 Dec 2009 19:36:50 -0800
+
 autorotate (0.3) karmic; urgency=low
 
   * Initial release.
 
- -- Karol Krizka <kkrizka@gmail.com>  Tue, 17 Nov 2009 12:31:46 -0800
+ -- Karol Krizka <kkrizka@gmail.com>  Mon, 21 Dec 2009 19:00:42 -0800

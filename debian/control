@@ -2,13 +2,13 @@ Source: autorotate
 Section: x11
 Priority: extra
 Maintainer: Karol Krizka <kkrizka@gmail.com>
-Build-Depends: debhelper (>=5.0.0), python-support (>= 0.6), cdbs (>= 0.4.49), python-dev, python-xrandr (>=0.1.1), python-dbus, python-notify
+Build-Depends: debhelper (>=5.0.0), python-support (>= 0.6), cdbs (>= 0.4.49), python-dev
 XS-Python-Version: current
 Standards-Version: 3.8.3.0
 
 Package: autorotate
 Architecture: all
 Homepage: http://www.krizka.net
-Depends: ${misc:Depends}, ${python:Depends}
+Depends: ${misc:Depends}, ${python:Depends}, python-xrandr (>=0.1.1), python-dbus, python-notify
 XB-Python-Version: ${python:Versions}
 Description: Automatically rotates the screen of a tablet laptop based on orientation.
