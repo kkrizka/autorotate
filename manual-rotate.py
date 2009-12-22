@@ -23,22 +23,28 @@
 
 import sys
 import dbus
+import pynotify
 from traceback import print_exc
 
 from libautorotate import *
 
 def main():
-    bus = dbus.SystemBus()
+    system_bus = dbus.SystemBus()
+    system_services = system_bus.list_names()
 
     # Attempt to contact auto-rotate.py on the system bus. If it fails, just perform manual rotation
-    try:
-        remote_state = bus.get_object("net.krizka.autorotate",
-                                      "/rotate")
+    if("net.krizka.autorotate" in system_services):
+        remote_state = system_bus.get_object("net.krizka.autorotate",
+                                             "/rotate")
+
+        # Connect to notification daemon, if possible
+        notify_enabled=pynotify.init("Manual Rotation");
         
         # you can either specify the dbus_interface in each call...
         mode = remote_state.GetMode(dbus_interface = "net.krizka.autorotate.GetMode");
         if(mode=='laptop'): # Don't do anything in laptop mode
-            print("Laptop mode...")
+            if(notify_enabled):
+                pynotify.Notification("Screen is in laptop mode, rotation is disabled","","dialog-error").show();
             return;
 
         rotation=remote_state.GetRotation(dbus_interface = "net.krizka.autorotate.GetRotation");
@@ -47,16 +53,16 @@ def main():
         # After we reach 180 and we are in manual rotation, we want to go back to automatic rotation
         if(rotation==xrandr.RR_ROTATE_180 and disabled==True):
             remote_state.SetDisabled(False,dbus_interface = "net.krizka.autorotate.SetDisabled");
+            if(notify_enabled):
+                pynotify.Notification("Enabling automatic rotation","","video-display").show();
         else: # Otherwise go to next rotation in list
             remote_state.SetNextRotation(dbus_interface = "net.krizka.autorotate.SetNextRotation");
+            if(notify_enabled and disabled==False):
+                pynotify.Notification("Disabling automatic rotation","","video-display").show();
 
-    except dbus.DBusException as e:
-        if(str(e)[0:41]=="org.freedesktop.DBus.Error.ServiceUnknown"):
-            #Cannot connect to the service, meaning that we rotate the screen manually..
-            rotate=AutoRotate();
-            rotate.SetNextRotation();
-        else: #Some weird error, print out out
-            print_exc()
-            sys.exit(1)
+    else:
+        # No autorotate service, meaning that we rotate the screen manually..
+        rotate=AutoRotate();
+        rotate.SetNextRotation();
 
 main()
