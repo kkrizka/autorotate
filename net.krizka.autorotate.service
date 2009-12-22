@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<node name="/org/gnome/ServiceName">
-	<interface name="org.gnome.ServiceName">
-		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server"/>
-		<method name="EchoString">
-			<arg type="s" name="original" direction="in" />
-			<arg type="s" name="echo" direction="out" />
-		</method>
-		<!-- Add more methods/signals if you want -->
-	</interface>
+<node name="/rotate">
+  <interface name="net.krizka.autorotate">
+    <method name="IsDisabled">
+      <arg type="b" name="status" direction="out" />
+    </method>
+    <method name="SetDisabled">
+      <arg type="b" name="status" direction="in" />
+    </method>
+    <method name="GetMode">
+      <arg type="s" name="mode" direction="in" />
+    </method>
+    <method name="GetRotation">
+      <arg type="i" name="rotation" direction="out" />
+    </method>
+    <method name="SetRotation">
+      <arg type="i" name="rotation" direction="in" />
+    </method>
+    <method name="SetNextRotation" />
+
+    <!-- Add more methods/signals if you want -->
+  </interface>
 </node>
