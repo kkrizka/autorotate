@@ -26,3 +26,4 @@ To install:
       a) For example, add the following to the end, but before exit 0, of /etc/gdm/Init/Default
          auto-rotate.py &
    3) Bind a button to manual-rotate.py command, which disables automatic rotation and allows you to control it manually.
+
