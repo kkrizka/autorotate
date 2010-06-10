@@ -1,3 +1,9 @@
+autorotate (0.4~ppa1~lucid1) lucid; urgency=low
+
+  * Rebuilt for Ubuntu Lucid 
+
+ -- Karol Krizka <kkrizka@gmail.com>  Sun, 06 Jun 2010 12:02:19 -0400
+
 autorotate (0.4) karmic; urgency=low
 
   * Added .conf file to allow creation of system bus

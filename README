@@ -1,7 +1,7 @@
 Package: autorotate
-Version: 0.3
+Version: 0.4
 Author: Karol Krizka <kkrizka@gmail.com>
-Website: http://www.krizka.net
+Website: http://www.krizka.net/projects/autorotate
 
 
 Automatically rotates the screen of a tablet laptop based on orientation using the HDAPS sensor. It was developed for the ThinkPad X61 Tablet, but it should work with any other tablet too.

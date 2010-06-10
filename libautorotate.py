@@ -6,7 +6,9 @@ import glib
 import os,time,re,sys,stat;
 import math;
 
-from xrandr import xrandr
+import subprocess;
+
+import xrandr
 
 class AutoRotate(dbus.service.Object):
     ## Setup important paths
@@ -92,7 +94,20 @@ class AutoRotate(dbus.service.Object):
 	#print "Autorotate: "+txt
 
     def listDevices(self):
-        return ["stylus"];
+        process=subprocess.Popen(["xsetwacom","--list"],stdout=subprocess.PIPE)
+        process.wait()
+
+        devices=[]
+        for line in process.stdout:
+            line=line.strip();
+            # Line has format "device name with spaces TYPE"
+            # We do not want the TYPE part..
+            parts=line.split(' ');
+            dev_type=parts.pop();
+            dev_name=' '.join(parts);
+            devices.append(dev_name)
+
+        return devices
 
     # Correct the rotation of the stylus input
     def rotateWacom(self,rotation):
