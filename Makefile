@@ -12,6 +12,7 @@ all:
 	@echo "make install - Install on local system"
 	@echo "make buildrpm - Generate a rpm package"
 	@echo "make builddeb - Generate a deb package"
+	@echo "make buildsdeb - Generate a source deb package"
 	@echo "make clean - Get rid of scratch and byte files"
 
 source:
@@ -30,6 +31,14 @@ builddeb:
 	rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
 	# build the package
 	dpkg-buildpackage -i -I -rfakeroot -k56C1A77A
+
+buildsdeb:
+	# build the source package in the parent directory
+	# then rename it to project_version.orig.tar.gz
+	$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../ --prune
+	rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
+	# build the package
+	dpkg-buildpackage -S -i -I -rfakeroot -k56C1A77A
 
 clean:
 	$(PYTHON) setup.py clean

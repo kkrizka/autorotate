@@ -24,7 +24,7 @@
 from libautorotate import *
 
 import os,time,re,sys,stat;
-from xrandr import xrandr
+import xrandr
 
 import dbus
 import dbus.service
