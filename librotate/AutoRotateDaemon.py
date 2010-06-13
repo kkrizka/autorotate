@@ -32,7 +32,9 @@ import subprocess;
 
 from xrandr import xrandr
 
-class AutoRotate(dbus.service.Object):
+from librotate import Rotate
+
+class AutoRotateDaemon(dbus.service.Object):
     ## Setup important paths
     # Contains the calibration of the accelerometer
     caliPath='/sys/devices/platform/hdaps/calibrate';
@@ -44,11 +46,16 @@ class AutoRotate(dbus.service.Object):
     tabletModePath='/sys/devices/platform/thinkpad_acpi/hotkey_tablet_mode';
 
     disabled=False;
+    
+    # Calibration
     xCal=0;
     yCal=0;
 
+    # The last mode registered by autorotate
     currentMode='';
-    screen=xrandr.get_current_screen();
+
+    # Codes for rotation
+    rotate=Rotate.Rotate();
 
     def __init__(self,bus=0,object_path=''):
         if(bus!=0):
@@ -88,69 +95,24 @@ class AutoRotate(dbus.service.Object):
     @dbus.service.method("net.krizka.autorotate.GetRotation",
                          in_signature='', out_signature='i')
     def GetRotation(self):
-        return self.screen.get_current_rotation();
+        return self.rotate.GetRotation();
 
     @dbus.service.method("net.krizka.autorotate.SetRotation",
                          in_signature='i', out_signature='')
     def SetRotation(self,rotation):
-	if(rotation!=self.screen.get_current_rotation()):
-            self.screen.set_rotation(rotation);
-            self.screen.apply_config();
-            self.rotateWacom(rotation);
-            self.rotateButtons(rotation);
+        self.rotate.SetRotation();
 
     @dbus.service.method("net.krizka.autorotate.SetNextRotation",
                          in_signature='', out_signature='')
     def SetNextRotation(self):
-        current_rotation=self.GetRotation();
-
-        # The codes go up as powers of two: 1,2,4,8
-        #so we log2 it and increment by 1.
-        next_rotation=int((math.log(current_rotation)/math.log(2)+1)%4);
-        
-        self.SetDisabled(True);
-        self.SetRotation(2**next_rotation);
+        self.rotate.SetNextRotation();
+        self.SetDisabled(True); # Disable automatic rotation
 
     def log(self,txt):
         pass;
 	#print "Autorotate: "+txt
 
-    def listDevices(self):
-        process=subprocess.Popen(["xsetwacom","--list"],stdout=subprocess.PIPE)
-        process.wait()
-
-        devices=[]
-        for line in process.stdout:
-            line=line.strip();
-            # Line has format "device name with spaces TYPE"
-            # We do not want the TYPE part..
-            parts=line.split(' ');
-            dev_type=parts.pop();
-            dev_name=' '.join(parts);
-            devices.append(dev_name)
-
-        return devices
-
-    # Correct the rotation of the stylus input
-    def rotateWacom(self,rotation):
-	codes={xrandr.RR_ROTATE_0:"none",
-	       xrandr.RR_ROTATE_90:"ccw",
-	       xrandr.RR_ROTATE_180:"half",
-	       xrandr.RR_ROTATE_270:"cw"};
-	for i in self.listDevices():
-            os.system("xsetwacom set \""+i+"\" Rotate "+codes[rotation]);
-
-    # Correct the rotation of the arrow buttons.
-    def rotateButtons(self,rotation):
-        keysim=["71","6d","6f","6e"];
-        keycodes={xrandr.RR_ROTATE_0:[105,108,106,103],
-                  xrandr.RR_ROTATE_90:[103,105,108,106],
-                  xrandr.RR_ROTATE_180:[106,103,105,108],
-                  xrandr.RR_ROTATE_270:[108,106,103,105]};
-	for i in keysim:
-            toCode=keycodes[rotation].pop();
-            os.system("setkeycodes "+str(i)+" "+str(toCode));
-
+    # This code is run every 2 seconds
     def run(self):
         try:
             # Check mode

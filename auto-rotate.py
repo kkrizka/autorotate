@@ -21,7 +21,7 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-from libautorotate import *
+from librotate import AutoRotateDaemon
 
 import os,time,re,sys,stat;
 from xrandr import xrandr
@@ -42,7 +42,7 @@ def main():
     if(not "net.krizka.autorotate" in system_services): # Don't bother starting several instances of the autorotate daemon
         busname = dbus.service.BusName("net.krizka.autorotate",system_bus);
         
-        autorotate=AutoRotate(system_bus,"/rotate")
+        autorotate=AutoRotateDaemon.AutoRotateDaemon(system_bus,"/rotate")
         
         # Start loop
         glib.timeout_add(2000,autorotate.run)
