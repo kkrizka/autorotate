@@ -5,7 +5,7 @@ PYTHON=`which python`
 DESTDIR=/
 BUILDIR=$(CURDIR)/debian/autorotate
 PROJECT=autorotate
-VERSION=0.4
+VERSION=0.4.1
 
 all:
 	@echo "make source - Create source package"

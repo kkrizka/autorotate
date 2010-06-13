@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup (name='autorotate',
-       version='0.4',
+       version='0.4.1',
        description='Automatically rotates the screen of a tablet laptop based on orientation.',
        author='Karol Krizka',
        author_email='kkrizka@gmail.com',
