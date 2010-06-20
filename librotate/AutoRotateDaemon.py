@@ -104,14 +104,14 @@ class AutoRotateDaemon(dbus.service.Object):
                         return True;
                 elif(abs(y)>abs(x)):
                     if(y>0):
-                        nextMode=xrandr.RR_ROTATE_270
+                        nextMode=xrandr.RR_ROTATE_180
                     else:
-                        nextMode=xrandr.RR_ROTATE_90
+                        nextMode=xrandr.RR_ROTATE_0
                 else:
                     if(x<0):
-                        nextMode=xrandr.RR_ROTATE_0
+                        nextMode=xrandr.RR_ROTATE_90
                     else:
-                        nextMode=xrandr.RR_ROTATE_180
+                        nextMode=xrandr.RR_ROTATE_270
 
                 self.setRotation(nextMode);
             elif(self.currentMode=='tablet' and mode=='laptop'):
