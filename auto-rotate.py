@@ -31,6 +31,7 @@ import dbus.service
 import dbus.mainloop.glib
 
 import gobject
+import glib
 
 def main():
     # Setup DBus connection for remote control
