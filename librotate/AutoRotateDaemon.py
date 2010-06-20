@@ -57,11 +57,6 @@ class AutoRotateDaemon(dbus.service.Object):
     def setDisabled(self,disabled):
         self.disabled=disabled;
 
-    @dbus.service.method("net.krizka.autorotate.getMode",
-                         in_signature='', out_signature='s')
-    def getMode(self):
-        return self.currentMode;
-
     @dbus.service.method("net.krizka.autorotate.getRotation",
                          in_signature='', out_signature='i')
     def getRotation(self):

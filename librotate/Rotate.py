@@ -20,12 +20,11 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-import subprocess;
+import subprocess
 import os
+import math
 
 from xrandr import xrandr
-
-
 
 class Rotate:
     screen=xrandr.get_current_screen();
@@ -42,7 +41,7 @@ class Rotate:
             self.rotateButtons(rotation);
 
     def setNextRotation(self):
-        current_rotation=self.GetRotation();
+        current_rotation=self.getRotation();
 
         # The codes go up as powers of two: 1,2,4,8
         #so we log2 it and increment by 1.
