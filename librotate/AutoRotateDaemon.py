@@ -26,7 +26,7 @@ import dbus.service
 import sys;
 import math;
 
-from xrandr import xrandr
+import xrandr
 
 from . import Rotate
 from . import TabletInfo
