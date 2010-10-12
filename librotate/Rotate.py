@@ -83,4 +83,7 @@ class Rotate:
                   xrandr.RR_ROTATE_270:[108,106,103,105]};
 	for i in keysim:
             toCode=keycodes[rotation].pop();
-            os.system("setkeycodes "+str(i)+" "+str(toCode));
+            if(os.getuid()==0):
+                os.system("setkeycodes "+str(i)+" "+str(toCode));
+            else:
+                os.system("sudo -n setkeycodes "+str(i)+" "+str(toCode));
