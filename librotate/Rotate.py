@@ -24,7 +24,7 @@ import subprocess
 import os
 import math
 
-from xrandr import xrandr
+import xrandr
 
 class Rotate:
     screen=xrandr.get_current_screen();
