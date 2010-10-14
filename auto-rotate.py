@@ -44,7 +44,6 @@ def main():
 
     # Fork into a new process if daemon switch is present
     if(options.daemon and os.fork()!=0):
-        print "FORK";
         return;
 
     # Setup DBus connection for remote control

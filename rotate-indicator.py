@@ -34,9 +34,7 @@ class rotateindicator:
         if(self.controller.isDaemonRunning()):
             print "KILL"
         else:
-            print "START"
-            #print os.spawnl(os.P_NOWAIT,'auto-rotate.py');
-            subprocess.Popen('auto-rotate.py')
+            os.system("auto-rotate.py -d");
         self.refreshLabels();
 
     def __init__(self):
