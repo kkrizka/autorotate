@@ -4,6 +4,8 @@ import gobject
 import gtk
 import appindicator
 import dbus
+import os
+import subprocess
 
 from librotate import AutoRotateController
 import xrandr
@@ -28,6 +30,14 @@ class rotateindicator:
             self.daemon_menu_item.set_label("Start Auto-Rotate Daemon")
             self.auto_menu_item.set_sensitive(0);
 
+    def startStopDaemon(self,widget):
+        if(self.controller.isDaemonRunning()):
+            print "KILL"
+        else:
+            print "START"
+            #print os.spawnl(os.P_NOWAIT,'auto-rotate.py');
+            subprocess.Popen('auto-rotate.py')
+        self.refreshLabels();
 
     def __init__(self):
         ind = appindicator.Indicator ("autorotate-client", "gsd-xrandr", appindicator.CATEGORY_APPLICATION_STATUS)
@@ -61,8 +71,9 @@ class rotateindicator:
         separator_item1.show();
         menu.append(separator_item1);
             
-        self.daemon_menu_item.show();
+        self.daemon_menu_item.connect("activate",self.startStopDaemon);
         menu.append(self.daemon_menu_item);
+        self.daemon_menu_item.show();
 
         # Update the labels
         self.refreshLabels();
