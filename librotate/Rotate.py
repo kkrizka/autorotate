@@ -81,9 +81,13 @@ class Rotate:
                   xrandr.RR_ROTATE_90:[103,105,108,106],
                   xrandr.RR_ROTATE_180:[106,103,105,108],
                   xrandr.RR_ROTATE_270:[108,106,103,105]};
+
+        keycode_command="";
 	for i in keysim:
             toCode=keycodes[rotation].pop();
-            if(os.getuid()==0):
-                os.system("setkeycodes "+str(i)+" "+str(toCode));
-            else:
-                os.system("sudo -n setkeycodes "+str(i)+" "+str(toCode));
+            keycode_command+=" "+str(i)+" "+str(toCode);
+            
+        if(os.getuid()==0):
+            os.system("setkeycodes "+keycode_command);
+        else:
+            os.system("gksudo -D\"Auto-Rotate Daemon\" setkeycodes "+keycode_command);
