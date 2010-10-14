@@ -3,15 +3,21 @@
 import gobject
 import gtk
 import appindicator
-import dbus
 import os
 import subprocess
 
-from librotate import AutoRotateController
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+
+from librotate import AutoRotateController,AutoRotateDaemonMonitor
 import xrandr
+
+dbus.mainloop.glib.DBusGMainLoop(set_as_default=True);
 
 class rotateindicator:
     controller=AutoRotateController.AutoRotateController(dbus.SystemBus(),"/rotate");
+    monitor=AutoRotateDaemonMonitor.AutoRotateDaemonMonitor(dbus.SystemBus(),"/rotate");
     auto_menu_item = gtk.MenuItem("  Automatic")
     daemon_menu_item=gtk.MenuItem("Auto-Rotate Daemon");
 
@@ -35,9 +41,14 @@ class rotateindicator:
             print "KILL"
         else:
             os.system("auto-rotate.py -d");
-        self.refreshLabels();
 
+    def serviceCheck(self,name):
+        self.refreshLabels();
+        
     def __init__(self):
+        # Setup some callbacks to update the status of the buttons
+        self.monitor.daemon_status_callback=self.serviceCheck;
+
         ind = appindicator.Indicator ("autorotate-client", "gsd-xrandr", appindicator.CATEGORY_APPLICATION_STATUS)
         ind.set_status (appindicator.STATUS_ACTIVE)
         ind.set_attention_icon ("indicator-messages-new")
@@ -73,9 +84,6 @@ class rotateindicator:
         menu.append(self.daemon_menu_item);
         self.daemon_menu_item.show();
 
-        # Update the labels
-        self.refreshLabels();
-        
         # Run the indicator!
         ind.set_menu(menu)
 
