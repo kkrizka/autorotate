@@ -25,6 +25,7 @@ from librotate import AutoRotateDaemon
 
 import os,time,re,sys,stat;
 import xrandr
+import optparse
 
 import dbus
 import dbus.service
@@ -34,6 +35,18 @@ import gobject
 import glib
 
 def main():
+    # Initialize possible options
+    usage = "usage: %prog [options]"
+    options_parser=optparse.OptionParser(usage=usage)
+
+    options_parser.add_option("-d","--daemon",action='store_true',dest="daemon",help="fork and run as a daemon");
+    (options,args)=options_parser.parse_args();
+
+    # Fork into a new process if daemon switch is present
+    if(options.daemon and os.fork()!=0):
+        print "FORK";
+        return;
+
     # Setup DBus connection for remote control
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
