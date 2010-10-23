@@ -40,8 +40,15 @@ def main():
     (options,args)=options_parser.parse_args();
 
     # Fork into a new process if daemon switch is present
-    if(options.daemon and os.fork()!=0):
-        return;
+    if(options.daemon):
+        if(os.fork()==0):
+            # Decouple new process from the parent
+            os.chdir('/');
+            os.setsid();
+            os.umask(0);
+        else:
+            # End the parent process
+            return;
 
     # Setup DBus connection for remote control
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
