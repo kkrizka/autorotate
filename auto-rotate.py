@@ -31,9 +31,6 @@ import dbus
 import dbus.service
 import dbus.mainloop.glib
 
-import gobject
-import glib
-
 def main():
     # Initialize possible options
     usage = "usage: %prog [options]"
@@ -57,10 +54,7 @@ def main():
         
         autorotate=AutoRotateDaemon.AutoRotateDaemon(system_bus,"/rotate")
         
-        # Start loop
-        glib.timeout_add(2000,autorotate.run)
+        autorotate.start()
         
-        mainloop = gobject.MainLoop()
-        mainloop.run()
 
 main()

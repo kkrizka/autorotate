@@ -26,6 +26,9 @@ import dbus.service
 import sys;
 import math;
 
+import glib
+import gobject
+
 import xrandr
 
 from . import Rotate
@@ -42,6 +45,9 @@ class AutoRotateDaemon(dbus.service.Object):
 
     # Codes for rotation
     rotate=Rotate.Rotate();
+
+    # The GLIB mainloop that the daemon is running under
+    mainloop=None;
 
     def __init__(self,bus=0,object_path=''):
         if(bus!=0):
@@ -73,8 +79,18 @@ class AutoRotateDaemon(dbus.service.Object):
         self.rotate.setNextRotation();
         self.setDisabled(True); # Disable automatic rotation
 
+    @dbus.service.method("net.krizka.autorotate.kill",
+                         in_signature='', out_signature='')
+    def kill(self):
+        self.mainloop.quit();
+
     def log(self,txt):
 	print "Autorotate: "+txt
+
+    def start(self):
+        glib.timeout_add(2000,self.run)
+        self.mainloop = gobject.MainLoop()
+        self.mainloop.run()
 
     # This code is run every 2 seconds
     def run(self):
@@ -122,3 +138,5 @@ class AutoRotateDaemon(dbus.service.Object):
             raise
 
         return True;
+
+        

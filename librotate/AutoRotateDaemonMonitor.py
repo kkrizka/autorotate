@@ -38,3 +38,27 @@ class AutoRotateDaemonMonitor:
         if(self.daemon_status_callback):
             self.daemon_status_callback(name);
 
+    def isDaemonRunning(self):
+        system_services = self.bus.list_names();
+        return ("net.krizka.autorotate" in system_services);
+
+    def isDaemonDisabled(self):
+        if(not self.isDaemonRunning()):
+            return False;
+        else:
+            remote_state=bus.get_object("net.krizka.autorotate",self.object_path)
+            return remote_state.isDisabled(dbus_interface = "net.krizka.autorotate.isDisabled");
+
+    def setDaemonDisabled(self,disabled):
+        if(not self.isDaemonRunning()):
+            return;
+        else:
+            remote_state=bus.get_object("net.krizka.autorotate",self.object_path);
+            remote_state.setDisabled(disabled,dbus_interface = "net.krizka.autorotate.setDisabled");
+
+    def killDaemon(self):
+        if(not self.isDaemonRunning()):
+            return; # Cannot kill a non existent daemon
+        
+        remote_state=self.bus.get_object("net.krizka.autorotate",self.object_path);
+        remote_state.kill(dbus_interface = "net.krizka.autorotate.kill");

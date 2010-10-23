@@ -29,7 +29,7 @@ class rotateindicator:
         self.controller.setRotation(codes[direction]);
 
     def refreshLabels(self):
-        if(self.controller.isDaemonRunning()):
+        if(self.monitor.isDaemonRunning()):
             self.daemon_menu_item.set_label("Stop Auto-Rotate Daemon")
             self.auto_menu_item.set_sensitive(1);
         else:
@@ -37,8 +37,8 @@ class rotateindicator:
             self.auto_menu_item.set_sensitive(0);
 
     def startStopDaemon(self,widget):
-        if(self.controller.isDaemonRunning()):
-            print "KILL"
+        if(self.monitor.isDaemonRunning()):
+            self.monitor.killDaemon();
         else:
             os.system("auto-rotate.py -d");
 
