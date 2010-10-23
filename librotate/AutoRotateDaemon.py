@@ -82,6 +82,7 @@ class AutoRotateDaemon(dbus.service.Object):
     @dbus.service.method("net.krizka.autorotate.kill",
                          in_signature='', out_signature='')
     def kill(self):
+        self.log("Killing");
         self.mainloop.quit();
 
     def log(self,txt):
