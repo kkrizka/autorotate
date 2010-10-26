@@ -23,16 +23,18 @@
 import xrandr
 
 import dbus
+import dbus.mainloop
 
 class AutoRotateDaemonMonitor:
     object_path = "/remote";
     daemon_status_callback=0;
 
-    def __init__(self,bus=0,object_path=''):
+    def __init__(self,bus=None,object_path=''):
         self.bus=bus;
         self.object_path=object_path;
-        
-        bus.watch_name_owner("net.krizka.autorotate",self.handleDaemonStatus);
+
+        if(dbus.get_default_main_loop()!=None):
+            bus.watch_name_owner("net.krizka.autorotate",self.handleDaemonStatus);
 
     def handleDaemonStatus(self,name):
         if(self.daemon_status_callback):

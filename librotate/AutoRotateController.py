@@ -22,6 +22,7 @@
 
 from . import Rotate
 from . import TabletInfo
+from . import AutoRotateDaemonMonitor
 
 import xrandr
 
@@ -33,45 +34,29 @@ class AutoRotateController:
     tabletinfo=TabletInfo.TabletInfo();
     object_path = "/remote";
     notify_enabled=pynotify.init("Manual Rotation");
+    monitor=None;
 
     def __init__(self,bus=0,object_path=''):
         self.bus=bus;
         self.object_path=object_path;
-
-    def isDaemonRunning(self):
-        system_services = self.bus.list_names();
-        return ("net.krizka.autorotate" in system_services);
-
-    def isDaemonDisabled(self):
-        if(not self.isDaemonRunning()):
-            return False;
-        else:
-            remote_state=bus.get_object("net.krizka.autorotate",self.object_path)
-            return remote_state.isDisabled(dbus_interface = "net.krizka.autorotate.isDisabled");
-
-    def setDaemonDisabled(self,disabled):
-        if(not self.isDaemonRunning()):
-            return;
-        else:
-            remote_state=bus.get_object("net.krizka.autorotate",self.object_path);
-            remote_state.setDisabled(disabled,dbus_interface = "net.krizka.autorotate.setDisabled");
+        self.monitor=AutoRotateDaemonMonitor.AutoRotateDaemonMonitor(bus,object_path);
 
     def getRotation(self):
-        if(not self.isDaemonRunning()):
+        if(not self.monitor.isDaemonRunning()):
             return self.rotate.getRotation();
         else:
             remote_state=bus.get_object("net.krizka.autorotate",self.object_path)
             return remote_state.getRotation(dbus_interface = "net.krizka.autorotate.getRotation");
 
     def setRotation(self,rotation):
-        if(not self.isDaemonRunning()):
+        if(not self.monitor.isDaemonRunning()):
             self.rotate.setRotation(rotation);
         else:
             remote_state=bus.get_object("net.krizka.autorotate",self.object_path)
             remote_state.setRotation(rotation,dbus_interface = "net.krizka.autorotate.setRotation");
 
     def setNextRotation(self):
-        if(not self.isDaemonRunning()):
+        if(not self.monitor.isDaemonRunning()):
             self.rotate.setNextRotation();
         else:
             remote_state=bus.get_object("net.krizka.autorotate",self.object_path)
@@ -81,15 +66,15 @@ class AutoRotateController:
                     pynotify.Notification("Screen is in laptop mode, rotation is disabled","","dialog-error").show();
                 return;
 
-            disabled=self.isDaemonDisabled();
+            disabled=self.monitor.isDaemonDisabled();
             rotation=self.getRotation()
             # After we reach 180 and we are in manual rotation, we want to go back to automatic rotation
             if(rotation==xrandr.RR_ROTATE_180 and disabled==True):
-                self.setDaemonDisabled(False)
+                self.monitor.setDaemonDisabled(False)
                 if(self.notify_enabled):
                     pynotify.Notification("Enabling automatic rotation","","video-display").show();
             else: # Otherwise go to next rotation in list
                 remote_state.setNextRotation(dbus_interface = "net.krizka.autorotate.setNextRotation");
-                self.setDaemonDisabled(True); # Disable automatic rotation
+                self.monitor.setDaemonDisabled(True); # Disable automatic rotation
                 if(self.notify_enabled):
                     pynotify.Notification("Disabling automatic rotation","","video-display").show();
