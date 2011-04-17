@@ -56,11 +56,10 @@ class Rotate:
         devices=[]
         for line in process.stdout:
             line=line.strip();
-            # Line has format "device name with spaces TYPE"
-            # We do not want the TYPE part..
-            parts=line.split(' ');
-            dev_type=parts.pop();
-            dev_name=' '.join(parts);
+            # Line has format "device-name-with-spaces many-spaces INFO"
+            # We do not want the INFO part..
+            parts=line.split('  '); # Split at many (more than one) spaces
+            dev_name=parts[0].strip();
             devices.append(dev_name)
 
         return devices
